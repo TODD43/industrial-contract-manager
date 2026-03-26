@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-mono: 'Rajdhani', monospace;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+}
+
+@layer base {
+  :root {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
+    
+    /* Cyan telemetry primary */
+    --primary: 188 86% 53%;
+    --primary-foreground: 240 10% 4%;
+    
+    /* Darker steel secondary */
+    --secondary: 240 10% 12%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 65%;
+    
+    /* Soft cyan accent */
+    --accent: 188 86% 15%;
+    --accent-foreground: 188 86% 53%;
+    
+    /* Risk Levels */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 240 10% 4%;
+    --success: 152 69% 31%;
+    --success-foreground: 0 0% 98%;
+
+    --border: 240 10% 15%;
+    --input: 240 10% 12%;
+    --ring: 188 86% 53%;
+    --radius: 0.125rem; /* Sharp, industrial corners */
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary selection:text-primary-foreground;
+    /* Subtle grid background for the entire app to give that technical blueprint feel */
+    background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-semibold uppercase tracking-wider;
+  }
+
+  /* Custom Scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background)); 
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border)); 
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground)); 
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-card/80 backdrop-blur-md border border-border shadow-lg shadow-black/50;
+  }
+  
+  .hud-border {
+    @apply relative border border-border;
+  }
+  
+  .hud-border::before {
+    content: '';
+    @apply absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-primary pointer-events-none;
+  }
+  
+  .hud-border::after {
+    content: '';
+    @apply absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-primary pointer-events-none;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px hsla(var(--primary) / 0.5);
+  }
+  
+  .text-glow-destructive {
+    text-shadow: 0 0 10px hsla(var(--destructive) / 0.5);
+  }
+  
+  .text-glow-warning {
+    text-shadow: 0 0 10px hsla(var(--warning) / 0.5);
+  }
+  
+  .data-value {
+    @apply font-mono text-lg font-semibold tracking-wide;
+  }
+  
+  .data-label {
+    @apply text-[10px] uppercase tracking-widest text-muted-foreground font-display font-bold mb-1 block;
+  }
+}

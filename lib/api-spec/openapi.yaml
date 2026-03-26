@@ -1,0 +1,1003 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: Industrial Contract & Supplier Lifecycle Manager API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication and RBAC
+  - name: users
+    description: User management
+  - name: suppliers
+    description: Supplier management
+  - name: contracts
+    description: Contract management and AI analysis
+  - name: documents
+    description: Document vault
+  - name: audit
+    description: Audit trail
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a new user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    put:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: User deleted
+
+  /suppliers:
+    get:
+      operationId: listSuppliers
+      tags: [suppliers]
+      summary: List suppliers
+      responses:
+        "200":
+          description: List of suppliers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Supplier"
+    post:
+      operationId: createSupplier
+      tags: [suppliers]
+      summary: Create a supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierRequest"
+      responses:
+        "201":
+          description: Supplier created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /suppliers/{id}:
+    get:
+      operationId: getSupplier
+      tags: [suppliers]
+      summary: Get supplier by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Supplier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+    put:
+      operationId: updateSupplier
+      tags: [suppliers]
+      summary: Update supplier
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSupplierRequest"
+      responses:
+        "200":
+          description: Supplier updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Supplier"
+
+  /contracts:
+    get:
+      operationId: listContracts
+      tags: [contracts]
+      summary: List contracts
+      parameters:
+        - name: supplierId
+          in: query
+          schema:
+            type: integer
+        - name: riskLevel
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, expired, pending, terminated]
+      responses:
+        "200":
+          description: List of contracts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contract"
+    post:
+      operationId: createContract
+      tags: [contracts]
+      summary: Create a contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContractRequest"
+      responses:
+        "201":
+          description: Contract created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+
+  /contracts/{id}:
+    get:
+      operationId: getContract
+      tags: [contracts]
+      summary: Get contract by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Contract
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    put:
+      operationId: updateContract
+      tags: [contracts]
+      summary: Update contract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContractRequest"
+      responses:
+        "200":
+          description: Contract updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    delete:
+      operationId: deleteContract
+      tags: [contracts]
+      summary: Delete contract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Contract deleted
+
+  /contracts/{id}/analyze:
+    post:
+      operationId: analyzeContract
+      tags: [contracts]
+      summary: AI-analyze a contract PDF to extract dates and clauses
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractAnalysis"
+
+  /contracts/{id}/risk:
+    get:
+      operationId: getContractRisk
+      tags: [contracts]
+      summary: Get expiry risk score for a contract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Risk assessment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskAssessment"
+
+  /contracts/expiry-calendar:
+    get:
+      operationId: getExpiryCalendar
+      tags: [contracts]
+      summary: Get contracts grouped by expiry month for calendar view
+      parameters:
+        - name: year
+          in: query
+          schema:
+            type: integer
+        - name: month
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Calendar data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalendarEntry"
+
+  /contracts/risk-summary:
+    get:
+      operationId: getRiskSummary
+      tags: [contracts]
+      summary: Get risk summary dashboard stats
+      responses:
+        "200":
+          description: Risk summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskSummary"
+
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List documents (filtered by vendor for suppliers)
+      parameters:
+        - name: supplierId
+          in: query
+          schema:
+            type: integer
+        - name: contractId
+          in: query
+          schema:
+            type: integer
+        - name: documentType
+          in: query
+          schema:
+            type: string
+            enum: [contract, technical_drawing, invoice, compliance_cert, sop, other]
+      responses:
+        "200":
+          description: List of documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+
+  /documents/upload:
+    post:
+      operationId: uploadDocument
+      tags: [documents]
+      summary: Upload a document
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                supplierId:
+                  type: integer
+                contractId:
+                  type: integer
+                documentType:
+                  type: string
+                  enum: [contract, technical_drawing, invoice, compliance_cert, sop, other]
+                description:
+                  type: string
+              required: [file, supplierId, documentType]
+      responses:
+        "201":
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      summary: Get document metadata
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete document
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Document deleted
+
+  /documents/{id}/download:
+    get:
+      operationId: downloadDocument
+      tags: [documents]
+      summary: Download a document (logs audit trail)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Document file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+
+  /audit:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit logs (admin only)
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: documentId
+          in: query
+          schema:
+            type: integer
+        - name: action
+          in: query
+          schema:
+            type: string
+            enum: [view, download, upload, delete, login, logout, analyze]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogList"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    LoginResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        message:
+          type: string
+      required: [user, message]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, supplier, client]
+        supplierId:
+          type: integer
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, email, name, role, createdAt]
+
+    CreateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, supplier, client]
+        supplierId:
+          type: integer
+      required: [email, name, password, role]
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, supplier, client]
+        supplierId:
+          type: integer
+
+    Supplier:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        contactEmail:
+          type: string
+        contactPhone:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        complianceScore:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, code, contactEmail, status, createdAt]
+
+    CreateSupplierRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        contactEmail:
+          type: string
+        contactPhone:
+          type: string
+        address:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+      required: [name, code, contactEmail]
+
+    UpdateSupplierRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        contactEmail:
+          type: string
+        contactPhone:
+          type: string
+        address:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        complianceScore:
+          type: number
+
+    Contract:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        supplierId:
+          type: integer
+        supplierName:
+          type: string
+          nullable: true
+        contractNumber:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, pending, terminated]
+        effectiveDate:
+          type: string
+          format: date
+          nullable: true
+        expiryDate:
+          type: string
+          format: date
+          nullable: true
+        autoRenewal:
+          type: boolean
+        autoRenewalTerms:
+          type: string
+          nullable: true
+        value:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+          nullable: true
+        daysUntilExpiry:
+          type: integer
+          nullable: true
+        aiExtracted:
+          type: boolean
+        notes:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, title, supplierId, contractNumber, status, autoRenewal, aiExtracted, createdAt, updatedAt]
+
+    CreateContractRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        supplierId:
+          type: integer
+        contractNumber:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, pending, terminated]
+        effectiveDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        autoRenewal:
+          type: boolean
+        autoRenewalTerms:
+          type: string
+        value:
+          type: number
+        currency:
+          type: string
+        notes:
+          type: string
+      required: [title, supplierId, contractNumber]
+
+    UpdateContractRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: string
+          enum: [active, expired, pending, terminated]
+        effectiveDate:
+          type: string
+          format: date
+        expiryDate:
+          type: string
+          format: date
+        autoRenewal:
+          type: boolean
+        autoRenewalTerms:
+          type: string
+        value:
+          type: number
+        currency:
+          type: string
+        notes:
+          type: string
+
+    ContractAnalysis:
+      type: object
+      properties:
+        effectiveDate:
+          type: string
+          nullable: true
+        expiryDate:
+          type: string
+          nullable: true
+        autoRenewal:
+          type: boolean
+        autoRenewalTerms:
+          type: string
+          nullable: true
+        keyTerms:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+        rawExtraction:
+          type: string
+      required: [autoRenewal, keyTerms, confidence, rawExtraction]
+
+    RiskAssessment:
+      type: object
+      properties:
+        contractId:
+          type: integer
+        riskLevel:
+          type: string
+          enum: [low, medium, high]
+        daysUntilExpiry:
+          type: integer
+          nullable: true
+        score:
+          type: number
+        factors:
+          type: array
+          items:
+            type: string
+        recommendation:
+          type: string
+      required: [contractId, riskLevel, score, factors, recommendation]
+
+    CalendarEntry:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        contracts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContractSummary"
+      required: [date, contracts]
+
+    ContractSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        supplierName:
+          type: string
+          nullable: true
+        riskLevel:
+          type: string
+          nullable: true
+        status:
+          type: string
+      required: [id, title, status]
+
+    RiskSummary:
+      type: object
+      properties:
+        total:
+          type: integer
+        highRisk:
+          type: integer
+        mediumRisk:
+          type: integer
+        lowRisk:
+          type: integer
+        expiringSoon:
+          type: integer
+        expired:
+          type: integer
+        active:
+          type: integer
+      required: [total, highRisk, mediumRisk, lowRisk, expiringSoon, expired, active]
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: integer
+        filename:
+          type: string
+        originalName:
+          type: string
+        supplierId:
+          type: integer
+        contractId:
+          type: integer
+          nullable: true
+        documentType:
+          type: string
+          enum: [contract, technical_drawing, invoice, compliance_cert, sop, other]
+        description:
+          type: string
+          nullable: true
+        fileSize:
+          type: integer
+        mimeType:
+          type: string
+        uploadedBy:
+          type: integer
+        uploaderName:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, filename, originalName, supplierId, documentType, fileSize, mimeType, uploadedBy, createdAt]
+
+    AuditLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userName:
+          type: string
+          nullable: true
+        userEmail:
+          type: string
+          nullable: true
+        action:
+          type: string
+          enum: [view, download, upload, delete, login, logout, analyze]
+        documentId:
+          type: integer
+          nullable: true
+        documentName:
+          type: string
+          nullable: true
+        contractId:
+          type: integer
+          nullable: true
+        ipAddress:
+          type: string
+          nullable: true
+        metadata:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, userId, action, createdAt]
+
+    AuditLogList:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+      required: [logs, total, limit, offset]

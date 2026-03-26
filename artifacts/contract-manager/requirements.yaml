@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "For industrial HUD-style animations and page transitions"
+  "recharts": "For dashboard telemetry and risk distribution charts"
+  "date-fns": "For formatting contract expiry dates and audit timestamps"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+  "lucide-react": "Icons for the UI"
+  "react-hook-form": "For robust form handling in complex modals"
+
+images:
+  - path: "artifacts/contract-manager/public/images/auth-bg.png"
+    description: "Dark, moody industrial abstract background, resembling a high-tech data vault or server room with subtle cyan and amber glowing server lights, shallow depth of field, 8k resolution, photorealistic"
+    aspect_ratio: "16:9"
+  - path: "artifacts/contract-manager/public/images/empty-state.png"
+    description: "Minimalist wireframe illustration of a secure document folder on a dark background with cyan glowing accents, blueprint style"
+    aspect_ratio: "1:1"
+
+notes:
+  - The app uses generated React Query hooks from @workspace/api-client-react
+  - Forms use standard React state or react-hook-form
+  - The UI theme is 'Dark Industrial Telemetry' (Palantir/SpaceX inspired) - sharp corners, monospaced data, high contrast darks, cyan/amber/red accents
